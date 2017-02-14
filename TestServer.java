@@ -18,7 +18,7 @@ class TestServer {
                 // then do something witht the socket
 
                 Thread thread = new Thread(new Runnable() {
-                	clientSocketInsideThread = clientSocket;
+                	Socket clientSocketInsideThread = clientSocket;
 				    @Override
 				    public void run() {
 				    	
