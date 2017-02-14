@@ -16,6 +16,16 @@ class TestServer {
             try {
                 Socket clientSocket = serverSocket.accept();
                 // then do something witht the socket
+
+                Thread thread = new Thread(new Runnable(Socket clientSocket) {
+
+			    @Override
+			    public void run() {
+			    	
+			    	print("TestServer");
+			    }
+			            
+			});
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -24,4 +34,16 @@ class TestServer {
     public static void main(String[] args) {
 		new  TestServer();
     }
+
+    public  static void print(String input){
+		
+		System.out.println(input);
+
+	}
+
+	public  static void print(int input){
+		
+		System.out.println(input);
+		
+	}
 }
