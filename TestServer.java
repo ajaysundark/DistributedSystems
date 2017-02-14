@@ -2,9 +2,9 @@ import java.net.*;
 import java.io.*;
 
 class TestServer {
-    ServerSocket serverSocket;
-    int serverPortNumber = 8888;
-    boolean serverRunning = true;
+    public static ServerSocket serverSocket;
+    public static int serverPortNumber = 8888;
+    public static boolean serverRunning = true;
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(serverPortNumber);
