@@ -23,8 +23,8 @@ class TestServer {
                         Thread thread = new Thread(new Runnable() {
 
                             @Override
-                            public void run(Socket s) {
-
+                            public void run() {
+                            	System.out.println("test");
 
                             }
 
