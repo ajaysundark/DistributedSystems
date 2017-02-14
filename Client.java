@@ -12,12 +12,21 @@ public class Client{
 			Socket clientSocket = new Socket( serverAddress, serverPortNumber);
 			print("Connected");
 			OutputStream clientOutputStream = clientSocket.getOutputStream();
-			DataOutputStream clientDataOutputStream = new DataOutputStream(clientOutputStream);
-			 clientDataOutputStream.writeUTF("Hello from " + clientSocket.getLocalSocketAddress());
-	         InputStream clientInputStream = clientSocket.getInputStream();
-	         DataInputStream clientDataInputStream = new DataInputStream(clientInputStream);
-	         
-	         System.out.println("Server says " + clientDataInputStream.readUTF());
+			InputStream clientInputStream = clientSocket.getInputStream();
+
+			print("\n\n\n\nCreating Account\n\n\n\n");
+			for (int i = 0;i < 100 ;i++ ) {
+				clientDataOutputStream.writeUTF("CreateAccount"); 
+				print( clientDataInputStream.readUTF());
+			}
+
+			print("\n\n\n\nDepositing Money\n\n\n\n\n");
+			int sum  = 0;
+			for (int i = 0;i < 100 ;i++ ) {
+				clientDataOutputStream.writeUTF("Deposit;"+String.valueOf(i)+"100"); 
+				print( clientDataInputStream.readUTF());
+			}
+
 	         clientSocket.close();
 		}catch (Exception e) {
 			System.out.println(e);
@@ -25,7 +34,6 @@ public class Client{
 
 	}
 	
-
 
 	public  static void print(String input){
 		
@@ -39,3 +47,9 @@ public class Client{
 		
 	}
 }
+
+
+
+
+//			 clientDataOutputStream.writeUTF("data"); 
+// clientDataInputStream.readUTF()
