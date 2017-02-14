@@ -3,7 +3,7 @@ import java.io.*;
 
 class TestServer {
     ServerSocket serverSocket;
-    int serverPortNumber = 8889;
+    int serverPortNumber = 8887;
     boolean serverRunning = true;
     public TestServer(){
     	try {
@@ -32,6 +32,7 @@ class TestServer {
 
             					String clientCommand = inputStream.readLine();
             					print("Client Command " + clientCommand);
+            					outputStream.print("Oka");
             				}
 				    	}catch (Exception e) {
 				    		e.printStackTrace();
