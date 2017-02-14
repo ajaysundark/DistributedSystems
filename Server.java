@@ -11,9 +11,7 @@ public class Server{
     int serverPortNumber = 8888;
     boolean serverRunning = true;
 
-	public static void main(String[] args) {
-		new Server();
-	}
+	
 	
     Server(){
     	print("Creating server");
@@ -56,6 +54,9 @@ public class Server{
             }
         }
 
+	}
+	public static void main(String[] args) {
+		new Server();
 	}
 	int CreateAcount(){
 		while(serverLock.tryLock() == false){}
