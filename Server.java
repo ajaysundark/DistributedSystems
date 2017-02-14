@@ -116,7 +116,7 @@ public class Server{
 		if (sourceAccount.withdral(amount)) {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
-			depositAccount.lock.unlock();
+			// depositAccount.lock.unlock();
 			return "OK";
 		}
 		sourceAccount.lock.unlock();
