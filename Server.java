@@ -54,14 +54,14 @@ public class Server{
 			threadsList.add(thread);
 		}
 
-		// for (Thread thread : threadsList ) {
-		// 	try{
-		// 	thread.join();
+		for (Thread thread : threadsList ) {
+			try{
+			thread.join();
 
-		// 	}catch (Exception e) {
-		// 		System.out.println(e);
-		// 	}
-		// }
+			}catch (Exception e) {
+				System.out.println(e);
+			}
+		}
 
 		print("All Done");
 		sum =0;
