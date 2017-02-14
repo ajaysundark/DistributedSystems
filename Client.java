@@ -14,7 +14,7 @@ public class Client{
 			OutputStream clientOutputStream = clientSocket.getOutputStream();
 			DataOutputStream clientDataOutputStream = new DataOutputStream(clientOutputStream);
 			InputStream clientInputStream = clientSocket.getInputStream();
-		    DataInputStream clientDataOutputStream = new DataInputStream(clientInputStream);
+		    DataInputStream clientDataInputStream = new DataInputStream(clientInputStream);
 			print("\n\n\n\nCreating Account\n\n\n\n");
 			for (int i = 0;i < 100 ;i++ ) {
 				clientDataOutputStream.writeUTF("CreateAccount"); 
