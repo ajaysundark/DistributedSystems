@@ -14,7 +14,7 @@ public class TestServer {
    boolean ServerOn = true;
    public TestServer() { 
       try {
-         myServerSocket = new ServerSocket(1579);
+         myServerSocket = new ServerSocket(1569);
       } catch(IOException ioe) { 
          System.out.println("Could not create server socket on port 8888. Quitting.");
          System.exit(-1);
@@ -71,6 +71,7 @@ public class TestServer {
                new OutputStreamWriter(myClientSocket.getOutputStream()));
             
             while(m_bRunThread) { 
+            	System.out.println("In while loop");
                String clientCommand = in.readLine(); 
                System.out.println("Client Says :" + clientCommand);
                

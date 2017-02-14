@@ -7,7 +7,7 @@ public class Client{
 
 		public static void main(String [] args) {
       String serverName = "127.0.0.1";//args[0];
-      int port = 1579;//Integer.parseInt(args[1]);
+      int port = 1569;//Integer.parseInt(args[1]);
       try {
          System.out.println("Connecting to " + serverName + " on port " + port);
          Socket client = new Socket(serverName, port);
