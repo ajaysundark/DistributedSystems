@@ -16,6 +16,7 @@ public class Server{
 	}
 	
     Server(){
+    	print("Creating server");
     	try {
             serverSocket = new ServerSocket(serverPortNumber);
         } catch (Exception e) {
@@ -25,6 +26,7 @@ public class Server{
         while (serverRunning) {
             try {
                 final Socket clientSocket = serverSocket.accept();
+                print("got connection");
                 Thread thread = new Thread(new Runnable() {
                 	Socket clientSocketInsideThread = clientSocket;
 				    @Override
