@@ -15,14 +15,27 @@ class TestServer {
         while (serverRunning) {
             try {
                 final Socket clientSocket = serverSocket.accept();
-                // then do something witht the socket
-
                 Thread thread = new Thread(new Runnable() {
                 	Socket clientSocketInsideThread = clientSocket;
 				    @Override
 				    public void run() {
-				    	
+				    	BufferedReader inputStream = null; 
+        				PrintWriter outputStream = null; 
 				    	print("TestServer");
+				    	try{
+
+				    		 inputStream = new BufferedReader(
+               new InputStreamReader(clientSocketInsideThread.getInputStream()));
+            outputStream = new PrintWriter(
+               new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
+            				while(true){
+            					
+            					String clientCommand = inputStream.readLine();
+            					print("Client Command " + clientCommand);
+            				}
+				    	}catch (Exception e) {
+				    		e.printStackTrace();
+				    	}
 				    }
 				            
 				});
