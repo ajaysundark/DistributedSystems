@@ -3,7 +3,7 @@ import java.io.*;
 
 class TestServer {
     ServerSocket serverSocket;
-    int serverPortNumber = 8880;
+    int serverPortNumber = 8870;
     boolean serverRunning = true;
     public TestServer(){
     	print("Starting Server");
@@ -26,8 +26,8 @@ class TestServer {
         				PrintWriter outputStream = null; 
 				    	try{
 
-				    		inputStream = new BufferedReader(new InputStreamReader(clientSocketInsideThread.getInputStream()));
-            				outputStream = new PrintWriter(new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
+				    		inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            				outputStream = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             				if (inputStream == null || outputStream == null) {
             					print ("streams are null");
             				}
