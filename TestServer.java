@@ -3,7 +3,7 @@ import java.io.*;
 
 class TestServer {
     ServerSocket serverSocket;
-    int serverPortNumber = 8885;
+    int serverPortNumber = 8881;
     boolean serverRunning = true;
     public TestServer(){
     	print("Starting Server");
