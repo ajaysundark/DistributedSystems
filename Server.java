@@ -32,7 +32,6 @@ public class Server{
 
 			    @Override
 			    public void run() {
-			    			// Server server =   new Server();
 			    	for (int j = 0;j<numberofIterations ;j++ ) {
 				        Random rand = new Random(); 
 				        int  sourceAccount =(int) rand.nextInt(99);
@@ -43,7 +42,7 @@ public class Server{
 				        print("depositAccount");
 				        print(depositAccount);
 				        print(server.Transfer(sourceAccount, depositAccount, 10));
-				     
+
 
 				    }
 
@@ -55,14 +54,14 @@ public class Server{
 			threadsList.add(thread);
 		}
 
-		for (Thread thread : threadsList ) {
-			try{
-			thread.join();
+		// for (Thread thread : threadsList ) {
+		// 	try{
+		// 	thread.join();
 
-			}catch (Exception e) {
-				System.out.println(e);
-			}
-		}
+		// 	}catch (Exception e) {
+		// 		System.out.println(e);
+		// 	}
+		// }
 
 		print("All Done");
 		sum =0;
