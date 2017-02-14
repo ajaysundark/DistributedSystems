@@ -10,7 +10,7 @@ class TestServer {
         Thread mainThread = new Thread(new Runnable() {
 
             @Override
-            public void run(Socket s) {
+            public void run() {
                 try {
                     serverSocket = new ServerSocket(serverPortNumber);
                 } catch (Exception e) {
