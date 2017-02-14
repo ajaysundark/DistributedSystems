@@ -112,7 +112,7 @@ public class Server{
 			return "FAIL";
 			
 		}
-		while (sourceAccount.lock.tryLock() == false && depositAccount.lock.tryLock() == false){}
+		while (sourceAccount.lock.tryLock() == false || depositAccount.lock.tryLock() == false){}
 		if (sourceAccount.withdral(amount)) {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
