@@ -24,7 +24,7 @@ public class Server{
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
 		int numberofThreads = 1;
-		int numberofIterations = 10;
+		int numberofIterations = 100;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
 		for (int i = 0;i <numberofThreads ;i++ ) {
@@ -36,7 +36,7 @@ public class Server{
 				        Random rand = new Random(); 
 				        int  sourceAccount =(int) rand.nextInt(99);
 				        int depositAccount = (int)rand.nextInt(99);
-				        sourceAccount = j;
+				        // sourceAccount = j;
 				        print("sourceAccount");
 				        print(sourceAccount);
 				        print("depositAccount");
