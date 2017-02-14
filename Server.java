@@ -18,5 +18,19 @@ public class Server{
 		}
 		return "FAILED";
 	}
+	int Getbalance(int uid){
+		Account account = accounts.get(uid);
+		return account.getBalance();
+	}
+
+	string Transfer(int source, int dest, int amount){
+		Account account  = accounts.get(source);
+		if (account.withdral(amount)) {
+			Account depositAccount =  accounts.get(dest);
+			depositAccount.deposit(amount);
+			return "OK";
+		}
+		return "FAIL";
+	}
 
 }
