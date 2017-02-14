@@ -1,5 +1,5 @@
 import java.util.*;
-
+import java.util.concurrent.locks.ReentrantLock ;
 
 public class Server{
 	Hashtable accounts= new Hashtable();
@@ -7,6 +7,21 @@ public class Server{
 	ReentrantLock serverLock = new ReentrantLock();
 	public static void main(String[] args) {
 		System.out.println("In main");
+		Server server =   new Server();
+		for (int i = 0;i < 100 ;i++ ) {
+			print(server.CreateAcount());
+		}
+		int sum  = 0;
+		for (int i = 0;i < 100 ;i++ ) {
+			print(server.Deposit(i,100));
+		}
+
+		for (int i = 0;i < 100 ;i++ ) {
+			sum+=(server.Getbalance(i));
+		}
+		print (sum);
+		
+
 	}
 	int CreateAcount(){
 		while(serverLock.tryLock() == false){}
@@ -17,8 +32,9 @@ public class Server{
 		serverLock.unlock();
 		return accountUID;
 	}
-	String Deposit(int amount, int uid){
+	String Deposit(int uid, int amount){
 		Account account =(Account) accounts.get(uid);
+
 		while (account.lock.tryLock() == false ){}
 		if(account.deposit(amount)){
 			account.lock.unlock();
@@ -52,6 +68,12 @@ public class Server{
 	}
 	public  static void print(String input){
 		System.out.println(input);
+
+	}
+
+	public  static void print(int input){
+		System.out.println(input);
+		
 	}
 
 }
