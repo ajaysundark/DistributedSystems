@@ -11,8 +11,8 @@ public class Client{
 			print("Connecting to " + serverAddress+" port " +String.valueOf(serverPortNumber));
 			Socket clientSocket = new Socket( serverAddress, serverPortNumber);
 			print("Connected");
-			OutputStream clientOutputStream = clientSocket.getOutputStream();
-			InputStream clientInputStream = clientSocket.getInputStream();
+			OutputStream clientDataOutputStream = clientSocket.getOutputStream();
+			InputStream clientDataInputStream = clientSocket.getInputStream();
 
 			print("\n\n\n\nCreating Account\n\n\n\n");
 			for (int i = 0;i < 100 ;i++ ) {
