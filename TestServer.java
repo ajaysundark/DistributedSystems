@@ -27,10 +27,11 @@ class TestServer {
 				    	print("TestServer");
 				    	try{
 
-				    		 inputStream = new BufferedReader(
-               new InputStreamReader(clientSocketInsideThread.getInputStream()));
-            outputStream = new PrintWriter(
-               new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
+				    		inputStream = new BufferedReader(new InputStreamReader(clientSocketInsideThread.getInputStream()));
+            				outputStream = new PrintWriter(new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
+            				if (inputStream == null || outputStream == null) {
+            					print ("streams are null");
+            				}
             				while(true){
             					print("listening to data stream");
             					String clientCommand = inputStream.readLine();
