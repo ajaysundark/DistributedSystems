@@ -14,7 +14,7 @@ class TestServer {
 
         while (serverRunning) {
             try {
-                Socket clientSocket = ServerSocket.accept();
+                Socket clientSocket = serverSocket.accept();
                 // then do something witht the socket
             } catch (Exception e) {
                 e.printStackTrace();
