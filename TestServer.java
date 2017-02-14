@@ -3,7 +3,7 @@ import java.io.*;
 
 class TestServer {
     ServerSocket serverSocket;
-    int serverPortNumber = 8881;
+    int serverPortNumber = 8880;
     boolean serverRunning = true;
     public TestServer(){
     	print("Starting Server");
@@ -24,7 +24,6 @@ class TestServer {
 				    	print("in run func");
 				    	BufferedReader inputStream = null; 
         				PrintWriter outputStream = null; 
-				    	print("TestServer");
 				    	try{
 
 				    		inputStream = new BufferedReader(new InputStreamReader(clientSocketInsideThread.getInputStream()));
@@ -35,7 +34,7 @@ class TestServer {
             				while(true){
             					print("listening to data stream");
             					String clientCommand = inputStream.readLine();
-            					print("Client Command " + clientCommand);
+            					System.out.println("Client Says :" + clientCommand);
             					outputStream.print("Oka");
             				}
 				    	}catch (Exception e) {

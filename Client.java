@@ -6,7 +6,7 @@ import java.io.*;
 public class Client{
 	public static void main(String[] args) {
 		String serverAddress = "127.0.0.1";//args[0];
-		int serverPortNumber = 8881;//Integer.parseInt(args[1]);
+		int serverPortNumber = 8880;//Integer.parseInt(args[1]);
 		try{
 			print("Connecting to " + serverAddress+" port " +String.valueOf(serverPortNumber));
 			Socket clientSocket = new Socket( serverAddress, serverPortNumber);
@@ -18,6 +18,7 @@ public class Client{
 			print("\n\n\n\nCreating Account\n\n\n\n");
 			for (int i = 0;i < 100 ;i++ ) {
 				clientDataOutputStream.writeUTF("CreateAccount"); 
+				print("sent command");
 				print( clientDataInputStream.readUTF());
 			}
 
