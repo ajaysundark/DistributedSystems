@@ -23,7 +23,7 @@ public class Server{
 		}
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
-		int numberofThreads = 100;
+		int numberofThreads = 1;
 		int numberofIterations = 100;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
@@ -112,18 +112,15 @@ public class Server{
 			return "FAIL";
 			
 		}
-		while(serverLock.tryLock() == false){}
 		while (sourceAccount.lock.tryLock() == false && depositAccount.lock.tryLock() == false){}
 		if (sourceAccount.withdral(amount)) {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
 			depositAccount.lock.unlock();
-			serverLock.unlock();
 			return "OK";
 		}
 		sourceAccount.lock.unlock();
 		depositAccount.lock.unlock();
-		serverLock.unlock();
 		return "FAIL";
 	}
 	public  static void print(String input){
