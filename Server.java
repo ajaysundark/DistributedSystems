@@ -4,15 +4,18 @@ import java.util.*;
 public class Server{
 	Hashtable accounts= new Hashtable();
 	int base=0;
-
+	ReentrantLock serverLock = new ReentrantLock();
 	public static void main(String[] args) {
 		System.out.println("In main");
 	}
 	int CreateAcount(){
+		while(serverLock.tryLock() == false){}
 		Account account  = new Account(base);
 		accounts.put(base, account);
+		int accountUID = base;
 		base++;
-		return base -1;
+		serverLock.unlock();
+		return accountUID;
 	}
 	String Deposit(int amount, int uid){
 		Account account =(Account) accounts.get(uid);
