@@ -5,7 +5,7 @@ class TestServer {
     ServerSocket serverSocket;
     int serverPortNumber = 8888;
     boolean serverRunning = true;
-    TestServer(){
+    public TestServer(){
     	try {
             serverSocket = new ServerSocket(serverPortNumber);
         } catch (Exception e) {
@@ -29,7 +29,7 @@ class TestServer {
             outputStream = new PrintWriter(
                new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
             				while(true){
-            					
+
             					String clientCommand = inputStream.readLine();
             					print("Client Command " + clientCommand);
             				}
