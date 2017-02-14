@@ -7,7 +7,7 @@ public class Client{
 
 		public static void main(String [] args) {
       String serverName = "127.0.0.1";//args[0];
-      int port = 1569;//Integer.parseInt(args[1]);
+      int port = 1568;//Integer.parseInt(args[1]);
       try {
          System.out.println("Connecting to " + serverName + " on port " + port);
          Socket client = new Socket(serverName, port);
@@ -15,9 +15,11 @@ public class Client{
          System.out.println("Just connected to " + client.getRemoteSocketAddress());
          OutputStream outToServer = client.getOutputStream();
          DataOutputStream out = new DataOutputStream(outToServer);
-         
+         System.out.println("Sending command");
          out.writeUTF("Hello from " + client.getLocalSocketAddress());
+         System.out.println("Data Sent");
          InputStream inFromServer = client.getInputStream();
+         System.out.println("Input stream made");
          DataInputStream in = new DataInputStream(inFromServer);
          
          System.out.println("Server says " + in.readUTF());

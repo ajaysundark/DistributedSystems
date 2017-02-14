@@ -14,7 +14,7 @@ public class TestServer {
    boolean ServerOn = true;
    public TestServer() { 
       try {
-         myServerSocket = new ServerSocket(1569);
+         myServerSocket = new ServerSocket(1568);
       } catch(IOException ioe) { 
          System.out.println("Could not create server socket on port 8888. Quitting.");
          System.exit(-1);
