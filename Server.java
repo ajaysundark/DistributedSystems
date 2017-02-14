@@ -23,8 +23,8 @@ public class Server{
 		}
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
-		int numberofThreads = 100;
-		int numberofIterations = 100;
+		int numberofThreads = 1000;
+		int numberofIterations = 1000;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
 		for (int i = 0;i <numberofThreads ;i++ ) {
