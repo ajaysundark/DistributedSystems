@@ -9,12 +9,12 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
  
-public class NewClass {
+public class TestServer {
    ServerSocket myServerSocket;
    boolean ServerOn = true;
-   public NewClass() { 
+   public TestServer() { 
       try {
-         myServerSocket = new ServerSocket(8888);
+         myServerSocket = new ServerSocket(8889);
       } catch(IOException ioe) { 
          System.out.println("Could not create server socket on port 8888. Quitting.");
          System.exit(-1);
@@ -45,7 +45,7 @@ public class NewClass {
    }
 	
    public static void main (String[] args) { 
-      new NewClass();        
+      new TestServer();        
    } 
 	
    class ClientServiceThread extends Thread { 
