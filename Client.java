@@ -5,7 +5,53 @@ import java.io.*;
 
 public class Client{
 	public static void main(String[] args) {
-		String serverAddress = "127.0.0.1";//args[0];
+
+		public static void main(String [] args) {
+      String serverName = "127.0.0.1";//args[0];
+      int port = 1579;//Integer.parseInt(args[1]);
+      try {
+         System.out.println("Connecting to " + serverName + " on port " + port);
+         Socket client = new Socket(serverName, port);
+         
+         System.out.println("Just connected to " + client.getRemoteSocketAddress());
+         OutputStream outToServer = client.getOutputStream();
+         DataOutputStream out = new DataOutputStream(outToServer);
+         
+         out.writeUTF("Hello from " + client.getLocalSocketAddress());
+         InputStream inFromServer = client.getInputStream();
+         DataInputStream in = new DataInputStream(inFromServer);
+         
+         System.out.println("Server says " + in.readUTF());
+         client.close();
+      }catch(IOException e) {
+         e.printStackTrace();
+      }
+   }
+
+
+		
+
+	public  static void print(String input){
+		
+		System.out.println(input);
+
+	}
+
+	public  static void print(int input){
+		
+		System.out.println(input);
+		
+	}
+}
+
+
+
+
+//			 clientDataOutputStream.writeUTF("data"); 
+// clientDataInputStream.readUTF()
+
+/*
+String serverAddress = "127.0.0.1";//args[0];
 		int serverPortNumber = 1589;//Integer.parseInt(args[1]);
 		try{
 			print("Connecting to " + serverAddress+" port " +String.valueOf(serverPortNumber));
@@ -36,22 +82,4 @@ public class Client{
 
 	}
 	
-
-	public  static void print(String input){
-		
-		System.out.println(input);
-
-	}
-
-	public  static void print(int input){
-		
-		System.out.println(input);
-		
-	}
-}
-
-
-
-
-//			 clientDataOutputStream.writeUTF("data"); 
-// clientDataInputStream.readUTF()
+*/
