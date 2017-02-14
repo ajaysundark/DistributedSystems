@@ -14,18 +14,18 @@ class TestServer {
 
         while (serverRunning) {
             try {
-                Socket clientSocket = serverSocket.accept();
+                final Socket clientSocket = serverSocket.accept();
                 // then do something witht the socket
 
-                Thread thread = new Thread(new Runnable(Socket clientSocket) {
-
-			    @Override
-			    public void run() {
-			    	
-			    	print("TestServer");
-			    }
-			            
-			});
+                Thread thread = new Thread(new Runnable() {
+                	clientSocketInsideThread = clientSocket;
+				    @Override
+				    public void run() {
+				    	
+				    	print("TestServer");
+				    }
+				            
+				});
             } catch (Exception e) {
                 e.printStackTrace();
             }
