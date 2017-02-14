@@ -5,8 +5,8 @@ import java.io.*;
 
 public class Client{
 	public static void main(String[] args) {
-		String serverAddress = args[0];
-		int serverPortNumber = Integer.parseInt(args[1]);
+		String serverAddress = 127.0.0.1;//args[0];
+		int serverPortNumber = 8888;//Integer.parseInt(args[1]);
 		try{
 			print("Connecting to " + serverAddress+" port " +String.valueOf(serverPortNumber));
 			Socket clientSocket = new Socket( serverAddress, serverPortNumber);
