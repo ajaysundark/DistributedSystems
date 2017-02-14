@@ -20,17 +20,6 @@ class TestServer {
                 while (serverRunning) {
                     try {
                         Socket clientSocket = ServerSocket.accept();
-                        Thread thread = new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                            	System.out.println("test");
-
-                            }
-
-                        });
-
-                        thread.start();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
