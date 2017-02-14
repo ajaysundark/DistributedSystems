@@ -1,9 +1,11 @@
 public class Account {
 	int balance;
 	int uid;
+	ReentrantLock lock;
 	Account(int _uid){
 		uid  = _uid;
 		balance = 0;
+		lock = new ReentrantLock();
 	}
 	int getBalance(){
 		return balance;
