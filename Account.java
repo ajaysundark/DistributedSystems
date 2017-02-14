@@ -1,8 +1,9 @@
 public class Account {
 	int balance;
 	int uid;
-	Account(){
-
+	Account(int _uid){
+		uid  = _uid;
+		balance = 0;
 	}
 	int getBalance(){
 		return balance;
