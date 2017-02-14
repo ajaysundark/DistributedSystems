@@ -13,7 +13,7 @@ public class Client{
 			print("Connected");
 			OutputStream clientOutputStream = clientSocket.getOutputStream();
 			DataOutputStream clientDataOutputStream = new DataOutputStream(clientOutputStream);
-			 out.writeUTF("Hello from " + clientSocket.getLocalSocketAddress());
+			 clientDataOutputStream.writeUTF("Hello from " + clientSocket.getLocalSocketAddress());
 	         InputStream clientInputStream = clientSocket.getInputStream();
 	         DataInputStream clientDataInputStream = new DataInputStream(clientInputStream);
 	         
