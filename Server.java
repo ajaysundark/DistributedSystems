@@ -2,16 +2,20 @@ import java.util.*;
 
 
 public class Server{
-	Hashtable accounts = new Hashtable();
-	int base = 0;
+	Hashtable accounts;
+	int base;
 
+	public static void main(String[] args) {
+		accounts = new Hashtable();
+		base = 0;
+	}
 	int CreateAcount(){
 		Account account  = new Account(base);
 		account.add(base, account);
 		base++;
 		return base -1;
 	}
-	string Deposit(int amount, int uid){
+	String Deposit(int amount, int uid){
 		Account account = accounts.get(uid);
 		if(account.deposit(amount)){
 			return "OK";
@@ -23,7 +27,7 @@ public class Server{
 		return account.getBalance();
 	}
 
-	string Transfer(int source, int dest, int amount){
+	String Transfer(int source, int dest, int amount){
 		Account account  = accounts.get(source);
 		if (account.withdral(amount)) {
 			Account depositAccount =  accounts.get(dest);

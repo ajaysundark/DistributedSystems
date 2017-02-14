@@ -19,7 +19,7 @@ public class Account {
 	}
 
 	boolean deposit(int _amount){
-		balance+=_amount
+		balance+=_amount;
 		return true;
 	}
 
