@@ -77,8 +77,8 @@ public class Server{
 		}
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
-		int numberofThreads = 10000;
-		int numberofIterations = 10000;
+		int numberofThreads = 1000;
+		int numberofIterations = 1000;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
 		for (int i = 0;i <numberofThreads ;i++ ) {
@@ -91,10 +91,10 @@ public class Server{
 				        int  sourceAccount =(int) rand.nextInt(99);
 				        int depositAccount = (int)rand.nextInt(99);
 				        // sourceAccount = j;
-				        print("sourceAccount");
-				        print(sourceAccount);
-				        print("depositAccount");
-				        print(depositAccount);
+				        // print("sourceAccount");
+				        // print(sourceAccount);
+				        // print("depositAccount");
+				        // print(depositAccount);
 				        print(server.Transfer(sourceAccount, depositAccount, 10));
 
 
