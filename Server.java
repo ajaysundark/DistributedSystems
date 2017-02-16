@@ -4,10 +4,10 @@ import java.net.*;
 import java.io.*;
 
 public class Server{
-	// Hashtable accounts= new Hashtable();
-	// int base=0;
-	// ReentrantLock serverLock = new ReentrantLock();
-	// 	 ServerSocket serverSocket;
+	Hashtable accounts= new Hashtable();
+	int base=0;
+	ReentrantLock serverLock = new ReentrantLock();
+		 ServerSocket serverSocket;
  //    int serverPortNumber = 8888;
  //    boolean serverRunning = true;
 
