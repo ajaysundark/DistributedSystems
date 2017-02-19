@@ -2,33 +2,38 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock ;
 
 public class Account {
-	int balance;
-	int uid;
+	private int balance;
+	private int uid;
 	ReentrantLock lock;
-	Account(int _uid){
+
+	Account(int _uid) {
 		uid  = _uid;
 		balance = 0;
 		lock = new ReentrantLock();
 	}
-	int getBalance(){
+
+	int getBalance() {
 		return balance;
 	}
-	int getUID(){
+
+	int getUID() {
 		return uid;
 	}
-	void setUID(int _uid){
+
+	void setUID(int _uid) {
 		uid = _uid;
 	}
-	void setBalance(int _balance){
+
+	void setBalance(int _balance) {
 		balance = _balance;
 	}
 
-	boolean deposit(int _amount){
+	boolean deposit(int _amount) {
 		balance+=_amount;
 		return true;
 	}
 
-	boolean withdral(int _amount){
+	boolean withdraw (int _amount) {
 		if (balance-_amount <0) {
 			return false;
 		}

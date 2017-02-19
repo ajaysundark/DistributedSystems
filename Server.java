@@ -1,70 +1,19 @@
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock ;
+import java.util.concurrent.locks.* ;
 import java.net.*;
 import java.io.*;
 
-public class Server{
-	Hashtable accounts= new Hashtable();
+public class Server {
+	Hashtable<Integer, Account> accounts= new Hashtable<>();
 	int base=0;
-	ReentrantLock serverLock = new ReentrantLock();
-		 ServerSocket serverSocket;
- //    int serverPortNumber = 8888;
- //    boolean serverRunning = true;
+	Lock serverLock = new ReentrantLock();
+	ServerSocket serverSocket;
 
-	
-	
- //    Server(){
- //    	print("Creating server");
- //    	try {
- //            serverSocket = new ServerSocket(serverPortNumber);
- //        } catch (Exception e) {
- //            e.printStackTrace();
- //        }
-
- //        while (serverRunning) {
- //            try {
- //                final Socket clientSocket = serverSocket.accept();
- //                print("got connection");
- //                Thread thread = new Thread(new Runnable() {
- //                	Socket clientSocketInsideThread = clientSocket;
-	// 			    @Override
-	// 			    public void run() {
-	// 			    	BufferedReader inputStream = null; 
- //        				PrintWriter outputStream = null; 
-	// 			    	print("TestServer");
-	// 			    	try{
-
-	// 			    		 inputStream = new BufferedReader(
- //               new InputStreamReader(clientSocketInsideThread.getInputStream()));
- //            outputStream = new PrintWriter(
- //               new OutputStreamWriter(clientSocketInsideThread.getOutputStream()));
- //            				while(true){
-            					
- //            					String clientCommand = inputStream.readLine();
- //            					print("Client Command " + clientCommand);
- //            				}
-	// 			    	}catch (Exception e) {
-	// 			    		e.printStackTrace();
-	// 			    	}
-	// 			    }
-				            
-	// 			});
- //            } catch (Exception e) {
- //                e.printStackTrace();
- //            }
- //        }
-
-
-
-	// }
-	public static void main(String[] args) {
-		// new Server();
-
-			System.out.println("In main");
-		Server server =   new Server();
+	private void testServer() {
+		// Test Server code
 		print("\n\n\n\nCreating Account\n\n\n\n");
 		for (int i = 0;i < 100 ;i++ ) {
-			print(server.CreateAcount());
+			print(server.CreateAccount());
 		}
 		print("\n\n\n\nDepositing Money\n\n\n\n\n");
 		int sum  = 0;
@@ -73,12 +22,13 @@ public class Server{
 		}
 
 		for (int i = 0;i < 100 ;i++ ) {
-			sum+=(server.Getbalance(i));
+			sum+=(server.GetBalance(i));
 		}
+
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
-		int numberofThreads = 1000;
-		int numberofIterations = 1000;
+		int numberofThreads = 100;
+		int numberofIterations = 5;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
 		for (int i = 0;i <numberofThreads ;i++ ) {
@@ -88,12 +38,8 @@ public class Server{
 			    public void run() {
 			    	for (int j = 0;j<numberofIterations ;j++ ) {
 				        Random rand = new Random(); 
-				        int  sourceAccount =(int) rand.nextInt(99);
-				        int depositAccount = (int)rand.nextInt(99);
-				        print("sourceAccount");
-				        // print(sourceAccount);
-				        // print("depositAccount");
-				        // print(depositAccount);
+				        int  sourceAccount = (int) rand.nextInt(99);
+				        int depositAccount = (int) rand.nextInt(99);
 				        print(server.Transfer(sourceAccount, depositAccount, 10));
 				    }
 
@@ -107,8 +53,7 @@ public class Server{
 
 		for (Thread thread : threadsList ) {
 			try{
-			thread.join();
-
+				thread.join();
 			}catch (Exception e) {
 				System.out.println(e);
 			}
@@ -117,13 +62,26 @@ public class Server{
 		print("All Done");
 		sum =0;
 		for (int i = 0;i < 100 ;i++ ) {
-			sum+=(server.Getbalance(i));
+			sum+=(server.GetBalance(i));
 		}
 		print("\n\n\n\nFinal Sum\n\n\n\n\n");
 		print (sum);
 	}
-	int CreateAcount(){
-		while(serverLock.tryLock() == false){}
+ 
+	public static void main(String[] args) {
+		System.out.println("In main");
+		Server server =   new Server();
+
+		testServer();
+		
+		serverSocket = new ServerSocket (5890);
+		DataInputStream dis = serverSocket.getInputStream();
+
+		
+	}
+
+	int CreateAccount() {
+		while(serverLock.tryLock() == false) {}
 		Account account  = new Account(base);
 		accounts.put(base, account);
 		int accountUID = base;
@@ -131,8 +89,9 @@ public class Server{
 		serverLock.unlock();
 		return accountUID;
 	}
-	String Deposit(int uid, int amount){
-		Account account =(Account) accounts.get(uid);
+
+	String Deposit(int uid, int amount) {
+		Account account = (Account) accounts.get(uid);
 
 		while (account.lock.tryLock() == false ){}
 		if(account.deposit(amount)){
@@ -142,27 +101,31 @@ public class Server{
 		account.lock.unlock();
 		return "FAILED";
 	}
-	int Getbalance(int uid){
-		Account account =(Account) accounts.get(uid);
+
+	int GetBalance(int uid) {
+		Account account = (Account) accounts.get(uid);
 		while (account.lock.tryLock() == false ){}
 		int balance = account.getBalance();
 		account.lock.unlock();
 		return balance;
 	}
 
-	String Transfer(int source, int dest, int amount){
+	String Transfer(int source, int dest, int amount) {
 		Account sourceAccount  =(Account) accounts.get(source);
 		Account depositAccount  =(Account) accounts.get(dest);
+
 		if (sourceAccount == null) {
 			System.out.println("source account is null");
 			return "FAIL";
 		}
+
 		if (depositAccount == null) {
 			System.out.println("depositAccount is null");
 			return "FAIL";
 			
 		}
-		while (sourceAccount.lock.tryLock() == false || depositAccount.lock.tryLock() == false){
+
+		while (sourceAccount.lock.tryLock() == false || depositAccount.lock.tryLock() == false) {
 			if (sourceAccount.lock.isLocked()) {
 				sourceAccount.lock.unlock();
 			}
@@ -170,7 +133,8 @@ public class Server{
 				depositAccount.lock.unlock();
 			}
 		}
-		if (sourceAccount.withdral(amount)) {
+
+		if (sourceAccount.withdraw(amount)) {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
 			depositAccount.lock.unlock();
