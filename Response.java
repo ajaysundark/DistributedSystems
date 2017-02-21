@@ -1,4 +1,6 @@
-public class Response {
+import java.io.Serializable;
+
+public class Response implements Serializable {
 	public static final int FAIL = -1;
 	public static final int SUCCESS = 1;
 
