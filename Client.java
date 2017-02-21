@@ -3,17 +3,13 @@ import java.io.*;
 
 public class Client {
 
-	public static void testClient() {
-
-	}
-
 	public static void main(String [] args) {
       String serverName = "127.0.0.1";
       int port = 5890;
       int funds = 0;
       int fromAccount = -1;
       int toAccount = -1;
-      Request req;
+      Request request;
       MessageType msg;
 
       try {
@@ -21,54 +17,72 @@ public class Client {
          Socket client = new Socket(serverName, port);
          
          print("connected to " + client.getRemoteSocketAddress());
+         Scanner keyboard = new Scanner(System.in);
+
          while (true) {
          	int op = 0;
-         	System.out.println("Select your operation:
-         						\n\t1. Create an Account.
-         						\n\t2. Deposit funds.
-         						\n\t3. Check Balance.
-         						\n\t4. Transfer funds.
-         						\n\t5. Quit.");
+         	System.out.println("Select your operation" + 
+         						"\n\t1. Create an Account" +
+         						"\n\t2. Deposit funds" +
+         						"\n\t3. Check Balance" +
+         						"\n\t4. Transfer funds" +
+         						"\n\t5. Quit.");
+         	
+         		op = Integer.parseInt(keyboard.readLine());
+         		switch (MessageType.fromInt(op)) {
 
-         	Scanner scanner = new Scanner();
-         	if(scanner.hasNextInt()) {
-         		op = scanner.readInt();
-         		switch (op) {
-         			case 1: //create account
+         			case MessageType.CREATE: //create account
+                     request = new NewAccountCreationRequest();
+         				break;
 
+         			case MessageType.DEPOSIT: //deposit
+                     System.out.println("Please specify the account number for depositing funds..");
+                     int account = Integer.parseInt(keyboard.readLine());
+                     System.out.println("How much would you like to deposit?");
+                     int amount = Integer.parseInt(keyboard.readLine());
+                     request = new DepositRequest(account, amount);
          				break;
-         			case 2: //deposit
+
+         			case MessageType.BALANCE: //balance
+                     System.out.println("Please specify the account number for checking balance..");
+                     int account = Integer.parseInt(keyboard.readLine());
+                     request = new BalanceRequest(account);
          				break;
-         			case 3: //balance
+
+         			case MessageType.TRANSFER: //transfer
+                     System.out.println("Please specify the account number to transfer from ");
+                     int fromAccount = Integer.parseInt(keyboard.readLine());
+                     System.out.println("Please specify the account number to transfer to ");
+                     int toAccount = Integer.parseInt(keyboard.readLine());
+                     System.out.println("How much would you like to transfer?");
+                     int amount = Integer.parseInt(keyboard.readLine());
+                     request = new DepositRequest(fromAccount, toAccount, amount);
          				break;
-         			case 4: //transfer
-         				break;
+
          			case 5: return;
          			default: op = 0;
          		}
-         	}
 
          	if (op==0) {
          		System.out.println("Illegal selection. Please select a valid input operation. \n");
-         	} else {
-         		msg = MessageType.fromInt(op);
          	}
+            else {
+               OutputStream outToServer = client.getOutputStream();
+               ObjectOutputStream sender = new ObjectOutputStream(outToServer);
+               sender.writeObject(request);
+
+               InputStream inFromServer = client.getInputStream();
+               ObjectInputStream in = new ObjectInputStream(inFromServer);
+
+               System.out.println("Server says " + ( (Response)in.readObject() ) );
+            }
          }
 
-         OutputStream outToServer = client.getOutputStream();
-		 PrintWriter sender  = new PrintWriter(new OutputStreamWriter(outToServer));
-         print("Sending command");
-         sender.print()
-
-         print("Data Sent");
-         InputStream inFromServer = client.getInputStream();
-         System.out.println("Input stream made");
-         DataInputStream in = new DataInputStream(inFromServer);
-         
-         System.out.println("Server says " + in.readUTF());
          client.close();
       } catch(IOException e) {
          e.printStackTrace();
+      } catch (NumberFormatException nfe) {
+         nfe.printStackTrace();
       }
    }
 

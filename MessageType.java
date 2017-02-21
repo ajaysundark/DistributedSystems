@@ -1,5 +1,5 @@
 public enum	MessageType {
-	Create(1), Deposit(2), Balance(3), Transfer(4);
+	UNKNOWN(0), Create(1), Deposit(2), Balance(3), Transfer(4);
 
 	private int type;
 
@@ -15,5 +15,6 @@ public enum	MessageType {
 		for (MessageType m : MessageType.values()) {
 			if (m.getType() == intType) { return m; }
 		}
+		return MessageType.UNKNOWN;
 	}
 }

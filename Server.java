@@ -1,15 +1,16 @@
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.* ;
 import java.net.*;
 import java.io.*;
 
 public class Server {
 	Hashtable<Integer, Account> accounts= new Hashtable<>();
-	int base=0;
+	int BASE=0;
 	Lock serverLock = new ReentrantLock();
-	ServerSocket serverSocket;
+	String serverLog = "serverLogFile";
 
-	private void testServer() {
+	private void testServer(Server server) {
 		// Test Server code
 		print("\n\n\n\nCreating Account\n\n\n\n");
 		for (int i = 0;i < 100 ;i++ ) {
@@ -72,34 +73,67 @@ public class Server {
 		System.out.println("In main");
 		Server server =   new Server();
 
-		testServer();
-		
-		serverSocket = new ServerSocket (5890);
-		DataInputStream dis = serverSocket.getInputStream();
+		// testServer(server);
+
+		ServerSocket serverSocket = new ServerSocket (5890);
+		Socket client;
+
+		ObjectInputStream oin;
+		ObjectOutputStream oos;
+		Request request = null;
+
+		ExecutorService es = Executors.newFixedThreadPool(2);
+		Future<Response> f;
+		FileWriter fw = new FileWriter(serverLog);
+		// List<Future<Response>> execList = new ArrayList<>(100);
+
+		while(true) {
+			client = serverSocket.accept();
+
+			System.out.println("Received request from client : " + client.getInetAddress());
+
+			try {
+				oin = new ObjectInputStream (client.getInputStream());
+				request = (Request) oin.readObject();
+				fw.append(request.toString()).append('\n');
+				f = es.submit(new ProcessThread(request));
+				if (f.isDone()) {
+					oos = new ObjectOutputStream(client.getOutputStream());
+					response = f.get();
+					oos.writeObject(response);
+					fw.append(response);
+					fw.flush();
+				}
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			} /*finally {
+				client.close();
+			}*/
+		}
 
 		
 	}
 
 	int CreateAccount() {
 		while(serverLock.tryLock() == false) {}
-		Account account  = new Account(base);
-		accounts.put(base, account);
-		int accountUID = base;
-		base++;
+		Account account  = new Account(BASE);
+		accounts.put(BASE, account);
+		int accountUID = BASE;
+		BASE++;
 		serverLock.unlock();
 		return accountUID;
 	}
 
-	String Deposit(int uid, int amount) {
+	int Deposit(int uid, int amount) {
 		Account account = (Account) accounts.get(uid);
 
 		while (account.lock.tryLock() == false ){}
 		if(account.deposit(amount)){
 			account.lock.unlock();
-			return "OK";
+			return Response.SUCCESS;
 		}
 		account.lock.unlock();
-		return "FAILED";
+		return Response.FAIL;
 	}
 
 	int GetBalance(int uid) {
@@ -110,18 +144,18 @@ public class Server {
 		return balance;
 	}
 
-	String Transfer(int source, int dest, int amount) {
+	int Transfer(int source, int dest, int amount) {
 		Account sourceAccount  =(Account) accounts.get(source);
 		Account depositAccount  =(Account) accounts.get(dest);
 
 		if (sourceAccount == null) {
 			System.out.println("source account is null");
-			return "FAIL";
+			return Reponse.SUCCESS;
 		}
 
 		if (depositAccount == null) {
 			System.out.println("depositAccount is null");
-			return "FAIL";
+			return Reponse.FAIL;
 			
 		}
 
@@ -138,22 +172,64 @@ public class Server {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
 			depositAccount.lock.unlock();
-			return "OK";
+			return Response.SUCCESS;
 		}
 		sourceAccount.lock.unlock();
 		depositAccount.lock.unlock();
-		return "FAIL";
-	}
-	public  static void print(String input){
-		
-		System.out.println(input);
+		return Response.FAIL;
+	} // Transfer ends
 
+	public  static void print(String input){
+		System.out.println(input);
 	}
 
 	public  static void print(int input){
-		
 		System.out.println(input);
-		
 	}
 
+
+	class ProcessThread implements Callable<Response> {
+		Request request = null;
+		Response response = null;
+
+		public ProcessThread(Request _req) {
+			this.request = _req;
+		}
+
+		public void call() {
+			if (request) {
+				Response response = null;
+				int fromAcc = -1;
+				int toAcc = -1;
+				int funds = 0;
+
+
+				switch(request.getMessageType()) {
+					case Create:
+						// NewAccountCreationRequest ; nothing to do with the request object
+						fromAcc = CreateAccount();
+						response = new CreateAccountResponse(fromAcc);
+						break;
+					case Deposit:
+						// DepositRequest
+						fromAcc = (DepositRequest).getAccountNumber();
+						funds = (DepositRequest).getFundToDeposit();
+						response = new DepositResponse(Deposit(fromAcc, funds));
+						break;
+					case Balance:
+						fromAcc = (BalanceRequest).getAccountNumber();
+						response = new BalanceResponse(GetBalance(fromAcc));
+						break;
+					case Transfer:
+						fromAcc = (TransferRequest).transferFrom();
+						toAcc = (TransferRequest).transferTo();
+						funds = (TransferRequest).getAmountToTransfer();
+						response = new TransferResponse(Transfer(fromAcc, toAcc, funds));
+						break;
+				}
+			}
+			return response;
+		} // call ends
+	} // Thread ends
+	
 }
