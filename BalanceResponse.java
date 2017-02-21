@@ -1,7 +1,7 @@
 public class BalanceResponse extends Response {
     private int balance;
     public BalanceResponse(int _balance) {
-        super(_balance>0);
+        super(_balance>=0);
         balance = _balance;
     }
 

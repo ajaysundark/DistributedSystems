@@ -1,20 +1,23 @@
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class Client {
 
 	public static void main(String [] args) {
       String serverName = "127.0.0.1";
       int port = 5890;
-      int funds = 0;
-      int fromAccount = -1;
-      int toAccount = -1;
-      Request request;
+        int fromAccount = -1;
+        int toAccount = -1;
+        int funds = 0;
+        Request request=null;
       MessageType msg;
 
-      try {
+        Socket client = null;
+
+        try {
          System.out.println("Connecting to " + serverName + " on port " + port);
-         Socket client = new Socket(serverName, port);
+         client = new Socket(serverName, port);
          
          print("connected to " + client.getRemoteSocketAddress());
          Scanner keyboard = new Scanner(System.in);
@@ -27,36 +30,36 @@ public class Client {
          						"\n\t3. Check Balance" +
          						"\n\t4. Transfer funds" +
          						"\n\t5. Quit.");
-         	
-         		op = Integer.parseInt(keyboard.readLine());
-         		switch (MessageType.fromInt(op)) {
 
-         			case MessageType.CREATE: //create account
+         		op = Integer.parseInt(keyboard.nextLine());
+         		switch (op) {
+
+         			case 1: //create account
                      request = new NewAccountCreationRequest();
          				break;
 
-         			case MessageType.DEPOSIT: //deposit
+         			case 2: //deposit
                      System.out.println("Please specify the account number for depositing funds..");
-                     int account = Integer.parseInt(keyboard.readLine());
+                     fromAccount = Integer.parseInt(keyboard.nextLine());
                      System.out.println("How much would you like to deposit?");
-                     int amount = Integer.parseInt(keyboard.readLine());
-                     request = new DepositRequest(account, amount);
+                     funds = Integer.parseInt(keyboard.nextLine());
+                     request = new DepositRequest(fromAccount, funds);
          				break;
 
-         			case MessageType.BALANCE: //balance
+         			case 3: //balance
                      System.out.println("Please specify the account number for checking balance..");
-                     int account = Integer.parseInt(keyboard.readLine());
-                     request = new BalanceRequest(account);
+                     fromAccount = Integer.parseInt(keyboard.nextLine());
+                     request = new BalanceRequest(fromAccount);
          				break;
 
-         			case MessageType.TRANSFER: //transfer
+         			case 4: //transfer
                      System.out.println("Please specify the account number to transfer from ");
-                     int fromAccount = Integer.parseInt(keyboard.readLine());
+                     fromAccount = Integer.parseInt(keyboard.nextLine());
                      System.out.println("Please specify the account number to transfer to ");
-                     int toAccount = Integer.parseInt(keyboard.readLine());
+                     toAccount = Integer.parseInt(keyboard.nextLine());
                      System.out.println("How much would you like to transfer?");
-                     int amount = Integer.parseInt(keyboard.readLine());
-                     request = new DepositRequest(fromAccount, toAccount, amount);
+                     funds = Integer.parseInt(keyboard.nextLine());
+                     request = new TransferRequest(fromAccount, toAccount, funds);
          				break;
 
          			case 5: return;
@@ -77,12 +80,15 @@ public class Client {
                System.out.println("Server says " + ( (Response)in.readObject() ) );
             }
          }
-
-         client.close();
       } catch(IOException e) {
          e.printStackTrace();
+      } catch(ClassNotFoundException cnfe) {
+          cnfe.printStackTrace();
       } catch (NumberFormatException nfe) {
          nfe.printStackTrace();
+      } finally {
+          try { client.close(); }
+          catch (IOException e) {}
       }
    }
 

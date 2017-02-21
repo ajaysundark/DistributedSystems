@@ -1,6 +1,6 @@
 public class TransferResponse extends Response {
     public TransferResponse(int _status) {
-        super(_status);
+        super(_status>0);
     }
 
     public String toString() {

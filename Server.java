@@ -8,7 +8,7 @@ public class Server {
 	Hashtable<Integer, Account> accounts= new Hashtable<>();
 	int BASE=0;
 	Lock serverLock = new ReentrantLock();
-	String serverLog = "serverLogFile";
+	private static final String serverLog = "serverLogFile";
 
 	private void testServer(Server server) {
 		// Test Server code
@@ -68,19 +68,15 @@ public class Server {
 		print("\n\n\n\nFinal Sum\n\n\n\n\n");
 		print (sum);
 	}
- 
-	public static void main(String[] args) {
-		System.out.println("In main");
-		Server server =   new Server();
 
-		// testServer(server);
-
+	public void serverProcess() throws IOException, InterruptedException, ExecutionException {
 		ServerSocket serverSocket = new ServerSocket (5890);
 		Socket client;
 
 		ObjectInputStream oin;
 		ObjectOutputStream oos;
 		Request request = null;
+		Response response = null;
 
 		ExecutorService es = Executors.newFixedThreadPool(2);
 		Future<Response> f;
@@ -101,7 +97,7 @@ public class Server {
 					oos = new ObjectOutputStream(client.getOutputStream());
 					response = f.get();
 					oos.writeObject(response);
-					fw.append(response);
+					fw.append(response.toString());
 					fw.flush();
 				}
 			} catch (ClassNotFoundException ex) {
@@ -110,8 +106,16 @@ public class Server {
 				client.close();
 			}*/
 		}
+	}
+	public static void main(String[] args) {
+		System.out.println("In main");
+		Server server =   new Server();
 
-		
+		// testServer(server);
+		try { server.serverProcess(); }
+		catch (IOException | InterruptedException | ExecutionException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	int CreateAccount() {
@@ -150,12 +154,12 @@ public class Server {
 
 		if (sourceAccount == null) {
 			System.out.println("source account is null");
-			return Reponse.SUCCESS;
+			return Response.SUCCESS;
 		}
 
 		if (depositAccount == null) {
 			System.out.println("depositAccount is null");
-			return Reponse.FAIL;
+			return Response.FAIL;
 			
 		}
 
@@ -196,8 +200,8 @@ public class Server {
 			this.request = _req;
 		}
 
-		public void call() {
-			if (request) {
+		public Response call() {
+			if (request!=null) {
 				Response response = null;
 				int fromAcc = -1;
 				int toAcc = -1;
@@ -212,18 +216,18 @@ public class Server {
 						break;
 					case Deposit:
 						// DepositRequest
-						fromAcc = (DepositRequest).getAccountNumber();
-						funds = (DepositRequest).getFundToDeposit();
+						fromAcc = ((DepositRequest) request).getAccountNumber();
+						funds = ((DepositRequest)request).getFundToDeposit();
 						response = new DepositResponse(Deposit(fromAcc, funds));
 						break;
 					case Balance:
-						fromAcc = (BalanceRequest).getAccountNumber();
+						fromAcc = ((BalanceRequest)request).getAccountNumber();
 						response = new BalanceResponse(GetBalance(fromAcc));
 						break;
 					case Transfer:
-						fromAcc = (TransferRequest).transferFrom();
-						toAcc = (TransferRequest).transferTo();
-						funds = (TransferRequest).getAmountToTransfer();
+						fromAcc = ((TransferRequest)request).transferFrom();
+						toAcc = ((TransferRequest)request).transferTo();
+						funds = ((TransferRequest)request).getAmountToTransfer();
 						response = new TransferResponse(Transfer(fromAcc, toAcc, funds));
 						break;
 				}

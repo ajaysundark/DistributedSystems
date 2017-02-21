@@ -1,6 +1,6 @@
 public class Response {
 	public static final int FAIL = -1;
-	public static final int SUCCESS = 0;
+	public static final int SUCCESS = 1;
 
 	private int status;
 

@@ -2,11 +2,11 @@ public class CreateAccountResponse extends Response {
     private int accountNumber;
     public CreateAccountResponse(int accountCreated) {
         super(accountCreated>0);
-        accountID = accountCreated;
+        accountNumber = accountCreated;
     }
 
     public int getAccountNumber() {
-        return accountID;
+        return accountNumber;
     }
 
     public String toString() {

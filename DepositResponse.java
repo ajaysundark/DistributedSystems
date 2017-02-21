@@ -1,6 +1,6 @@
 public class DepositResponse extends Response {
     public DepositResponse(int _status) {
-        super(_status);
+        super(_status>0);
     }
 
     public String toString() {

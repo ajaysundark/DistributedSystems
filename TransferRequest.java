@@ -4,7 +4,7 @@ public class TransferRequest extends Request {
     private int amount;
 
     public TransferRequest (int _fromAcc, int _toAcc, int _amount) {
-        super(MessageType.Transfer, acc);
+        super(MessageType.Transfer);
         this.fromAcc = _fromAcc;
         this.toAcc = _toAcc;
         this.amount = _amount;
