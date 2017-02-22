@@ -8,6 +8,7 @@ public class Server {
 	Hashtable<Integer, Account> accounts= new Hashtable<>();
 	int BASE=1;
 	Lock serverLock = new ReentrantLock();
+
 	private static final String serverLog = "serverLogFile";
 	private FileWriter fw;
 	
@@ -70,8 +71,8 @@ public class Server {
 		print (sum);
 	}
 
-	public void serverProcess() throws IOException, InterruptedException, ExecutionException {
-		ServerSocket serverSocket = new ServerSocket (5892);
+	public void serverProcess(int serverPort) throws IOException, InterruptedException, ExecutionException {
+		ServerSocket serverSocket = new ServerSocket (serverPort);
 		Socket client;
 
 		ObjectInputStream oin;
@@ -99,11 +100,16 @@ public class Server {
 		}
 	}
 	public static void main(String[] args) {
-		System.out.println("In main");
+		if (args.length!=1) {
+			System.err.println("Usage : java Server <port>");
+			return;
+		}
+
+		System.out.println("Server started..");
 		Server server =   new Server();
 		// testServer(server);
-		try { server.serverProcess(); }
-		catch (IOException | InterruptedException | ExecutionException ex) {
+		try { server.serverProcess(Integer.parseInt(args[0])); }
+		catch (IOException | InterruptedException | NumberFormatException | ExecutionException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -202,36 +208,36 @@ public class Server {
 				
 				System.out.println("Received request from client at Process thread.");
 
-				switch(request.getMessageType()) {
-					case Create:
-						// NewAccountCreationRequest ; nothing to do with the request object
-						fromAcc = CreateAccount();
-						response = new CreateAccountResponse(fromAcc);
-						System.out.println("Create done.");
-						break;
-					case Deposit:
-						// DepositRequest
-						fromAcc = ((DepositRequest) request).getAccountNumber();
-						funds = ((DepositRequest)request).getFundToDeposit();
-						response = new DepositResponse(Deposit(fromAcc, funds));
-						System.out.println("Deposit done.");
-						break;
-					case Balance:
-						// Balance request
-						fromAcc = ((BalanceRequest)request).getAccountNumber();
-						response = new BalanceResponse(GetBalance(fromAcc));
-						System.out.println("Balance query done.");
-						break;
-					case Transfer:
-						// Transfer request
-						fromAcc = ((TransferRequest)request).transferFrom();
-						toAcc = ((TransferRequest)request).transferTo();
-						funds = ((TransferRequest)request).getAmountToTransfer();
-						response = new TransferResponse(Transfer(fromAcc, toAcc, funds));
-						System.out.println("Transfer done.");
-						break;
-				}
 				try {
+					switch(request.getMessageType()) {
+						case Create:
+							// NewAccountCreationRequest ; nothing to do with the request object
+							fromAcc = CreateAccount();
+							response = new CreateAccountResponse(fromAcc);
+							fw.append("Create done : status " + response.getStatusString()).append('\n');
+							break;
+						case Deposit:
+							// DepositRequest
+							fromAcc = ((DepositRequest) request).getAccountNumber();
+							funds = ((DepositRequest)request).getFundToDeposit();
+							response = new DepositResponse(Deposit(fromAcc, funds));
+							fw.append("Deposit done: status " + response.getStatusString()).append('\n');
+							break;
+						case Balance:
+							// Balance request
+							fromAcc = ((BalanceRequest)request).getAccountNumber();
+							response = new BalanceResponse(GetBalance(fromAcc));
+							fw.append("Balance query done : " + response.getStatusString()).append('\n');
+							break;
+						case Transfer:
+							// Transfer request
+							fromAcc = ((TransferRequest)request).transferFrom();
+							toAcc = ((TransferRequest)request).transferTo();
+							funds = ((TransferRequest)request).getAmountToTransfer();
+							response = new TransferResponse(Transfer(fromAcc, toAcc, funds));
+							fw.append("Transfer done : " + response.getStatusString()).append('\n');
+							break;
+					}
 					oos = new ObjectOutputStream(cSocket.getOutputStream());
 					oos.writeObject(response);
 				} catch (IOException e) {

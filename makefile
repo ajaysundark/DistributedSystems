@@ -1,7 +1,7 @@
-partA:
-	javac Account.java MessageType.java Request.java Response.java BalanceRequest.java BalanceResponse.java NewAccountCreationRequest.java CreateAccountResponse.java DepositResponse.java DepositRequest.java TransferRequest.java TransferResponse.java Client.java BankClient.java Server.java	
+SUBDIRS := $(wildcard */.)
 
-clean:
-	$(RM) *.class
+all: $(SUBDIRS)
+	$(SUBDIRS):
+		$(MAKE) -C $@
 
-default: partA
+.PHONY: all $(SUBDIRS)

@@ -5,14 +5,22 @@ import java.util.*;
 public class BankClient {
 	private static String serverIp = "127.0.0.1";
 	private static int serverPort = 5892;
-	private static String clientLog = "clientLogFile";
 	private static int threadCount = 100;
 	private static int iterationCount = 100;
+	private static String clientLog = "clientLogFile";
 	private static FileWriter fw;
 	
 	public static void main(String[] args) {
-		List<Socket> openSocketList = new ArrayList<>();
 		try {
+			if (args.length!=4) {
+				System.out.println("Usage : BankClient serverIp serverPort threadCount iterationCount");
+			}
+
+			serverIp = args[0];
+			serverPort = Integer.parseInt(args[1]);
+			threadCount = Integer.parseInt(args[2]);
+			iterationCount = Integer.parseInt(args[3]);
+
 			fw = new FileWriter(clientLog);
 		
 			// create 100 accounts
@@ -115,12 +123,12 @@ public class BankClient {
 		
 		System.out.println("Finished balance query on 100 accounts  : Final total balance now is " + totalBalance);
 			
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+		} catch (IOException | ClassNotFoundException | NumberFormatException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	} // main ends
 	
-	private static void cLog(String log) throws IOException {
-		fw.append(log).append('\n');
+	public static void cLog(String log) throws IOException {
+		fw.append(log + '\n');
 	}
 }
