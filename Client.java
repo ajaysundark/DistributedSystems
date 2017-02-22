@@ -2,84 +2,72 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-public class Client {
+public class Client implements Runnable {
 
-	public static void main(String [] args) {
-      String serverName = "127.0.0.1";
-      int port = 5890;
-        int fromAccount = -1;
-        int toAccount = -1;
-        int funds = 0;
-        Request request=null;
-      MessageType msg;
+	private Request request = null;
+	private int iterations = 1;
+	private int operation = MessageType.UNKNOWN.getType();
 
+    private String serverName = "127.0.0.1";
+    private int port = 5892;
+	
+    public Client(int itr) {
+    	this.iterations = itr;
+    }
+    
+	public Client(Request req) {
+		this.request= req;
+	}
+	
+	public Client(Request req, int iter) {
+		this.request = req;
+		this.iterations = iter;
+	}
+	
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void run () {
+        
         Socket client = null;
 
         try {
          System.out.println("Connecting to " + serverName + " on port " + port);
-         client = new Socket(serverName, port);
-         
-         print("connected to " + client.getRemoteSocketAddress());
-         Scanner keyboard = new Scanner(System.in);
 
-         while (true) {
-         	int op = 0;
-         	System.out.println("Select your operation" + 
-         						"\n\t1. Create an Account" +
-         						"\n\t2. Deposit funds" +
-         						"\n\t3. Check Balance" +
-         						"\n\t4. Transfer funds" +
-         						"\n\t5. Quit.");
+     		operation = (null==request) ? 0 : request.getMessageType().getType(); 
+     		// System.out.println("Operation is " + operation);
+     		
+            while(iterations>0) {         		
+	         	if (operation==0) {
+	         		int fromAcc = (int) ((Math.random() * 100) + 1);
+	         		int toAcc = (int) ((Math.random() * 100) + 1);
+	         		request = new TransferRequest(fromAcc, toAcc, 10);
+	         	}
+	         	
+	         	client = new Socket(serverName, port);
+	            if(client.isConnected()) {
+	            	print("connected to " + client.getRemoteSocketAddress());
 
-         		op = Integer.parseInt(keyboard.nextLine());
-         		switch (op) {
-
-         			case 1: //create account
-                     request = new NewAccountCreationRequest();
-         				break;
-
-         			case 2: //deposit
-                     System.out.println("Please specify the account number for depositing funds..");
-                     fromAccount = Integer.parseInt(keyboard.nextLine());
-                     System.out.println("How much would you like to deposit?");
-                     funds = Integer.parseInt(keyboard.nextLine());
-                     request = new DepositRequest(fromAccount, funds);
-         				break;
-
-         			case 3: //balance
-                     System.out.println("Please specify the account number for checking balance..");
-                     fromAccount = Integer.parseInt(keyboard.nextLine());
-                     request = new BalanceRequest(fromAccount);
-         				break;
-
-         			case 4: //transfer
-                     System.out.println("Please specify the account number to transfer from ");
-                     fromAccount = Integer.parseInt(keyboard.nextLine());
-                     System.out.println("Please specify the account number to transfer to ");
-                     toAccount = Integer.parseInt(keyboard.nextLine());
-                     System.out.println("How much would you like to transfer?");
-                     funds = Integer.parseInt(keyboard.nextLine());
-                     request = new TransferRequest(fromAccount, toAccount, funds);
-         				break;
-
-         			case 5: return;
-         			default: op = 0;
-         		}
-
-         	if (op==0) {
-         		System.out.println("Illegal selection. Please select a valid input operation. \n");
+		            OutputStream outToServer = client.getOutputStream();
+		            ObjectOutputStream sender = new ObjectOutputStream(outToServer);
+		            sender.writeObject(request);
+		
+		            System.out.println("Request sent to server..");
+		               
+		            InputStream inFromServer = client.getInputStream();
+		            ObjectInputStream in = new ObjectInputStream(inFromServer);
+		               
+		            System.out.println("Server says " + ( (Response)in.readObject() ) );
+	            }
+	            client.close();
+	         	
+	            --iterations;	         	
          	}
-            else {
-               OutputStream outToServer = client.getOutputStream();
-               ObjectOutputStream sender = new ObjectOutputStream(outToServer);
-               sender.writeObject(request);
-
-               InputStream inFromServer = client.getInputStream();
-               ObjectInputStream in = new ObjectInputStream(inFromServer);
-
-               System.out.println("Server says " + ( (Response)in.readObject() ) );
-            }
-         }
       } catch(IOException e) {
          e.printStackTrace();
       } catch(ClassNotFoundException cnfe) {

@@ -6,11 +6,12 @@ import java.io.*;
 
 public class Server {
 	Hashtable<Integer, Account> accounts= new Hashtable<>();
-	int BASE=0;
+	int BASE=1;
 	Lock serverLock = new ReentrantLock();
 	private static final String serverLog = "serverLogFile";
-
-	private void testServer(Server server) {
+	private FileWriter fw;
+	
+	private void testServer(final Server server) {
 		// Test Server code
 		print("\n\n\n\nCreating Account\n\n\n\n");
 		for (int i = 0;i < 100 ;i++ ) {
@@ -28,8 +29,8 @@ public class Server {
 
 		print("\n\n\n\nSumming Deposits\n\n\n\n");
 		print (sum);
-		int numberofThreads = 100;
-		int numberofIterations = 5;
+		final int numberofThreads = 100;
+		final int numberofIterations = 5;
 		ArrayList<Thread> threadsList = new ArrayList<Thread>();
 		print("\n\n\n\nStarting Thread\n\n\n\n");
 		for (int i = 0;i <numberofThreads ;i++ ) {
@@ -70,36 +71,26 @@ public class Server {
 	}
 
 	public void serverProcess() throws IOException, InterruptedException, ExecutionException {
-		ServerSocket serverSocket = new ServerSocket (5890);
+		ServerSocket serverSocket = new ServerSocket (5892);
 		Socket client;
 
 		ObjectInputStream oin;
-		ObjectOutputStream oos;
 		Request request = null;
-		Response response = null;
+		
 
-		ExecutorService es = Executors.newFixedThreadPool(2);
-		Future<Response> f;
-		FileWriter fw = new FileWriter(serverLog);
-		// List<Future<Response>> execList = new ArrayList<>(100);
+		fw = new FileWriter(serverLog);
 
 		while(true) {
 			client = serverSocket.accept();
-
 			System.out.println("Received request from client : " + client.getInetAddress());
 
 			try {
 				oin = new ObjectInputStream (client.getInputStream());
 				request = (Request) oin.readObject();
 				fw.append(request.toString()).append('\n');
-				f = es.submit(new ProcessThread(request));
-				if (f.isDone()) {
-					oos = new ObjectOutputStream(client.getOutputStream());
-					response = f.get();
-					oos.writeObject(response);
-					fw.append(response.toString());
-					fw.flush();
-				}
+				Thread t = new Thread(new ProcessThread(client, request));
+				t.start();
+				
 			} catch (ClassNotFoundException ex) {
 				ex.printStackTrace();
 			} /*finally {
@@ -110,7 +101,6 @@ public class Server {
 	public static void main(String[] args) {
 		System.out.println("In main");
 		Server server =   new Server();
-
 		// testServer(server);
 		try { server.serverProcess(); }
 		catch (IOException | InterruptedException | ExecutionException ex) {
@@ -192,47 +182,69 @@ public class Server {
 	}
 
 
-	class ProcessThread implements Callable<Response> {
+	class ProcessThread implements Runnable {
 		Request request = null;
 		Response response = null;
-
-		public ProcessThread(Request _req) {
+		Socket cSocket = null;
+		ObjectOutputStream oos = null;
+		
+		public ProcessThread(Socket _client, Request _req) {
 			this.request = _req;
+			this.cSocket = _client;
 		}
 
-		public Response call() {
+		public void run() {
 			if (request!=null) {
 				Response response = null;
 				int fromAcc = -1;
 				int toAcc = -1;
 				int funds = 0;
-
+				
+				System.out.println("Received request from client at Process thread.");
 
 				switch(request.getMessageType()) {
 					case Create:
 						// NewAccountCreationRequest ; nothing to do with the request object
 						fromAcc = CreateAccount();
 						response = new CreateAccountResponse(fromAcc);
+						System.out.println("Create done.");
 						break;
 					case Deposit:
 						// DepositRequest
 						fromAcc = ((DepositRequest) request).getAccountNumber();
 						funds = ((DepositRequest)request).getFundToDeposit();
 						response = new DepositResponse(Deposit(fromAcc, funds));
+						System.out.println("Deposit done.");
 						break;
 					case Balance:
+						// Balance request
 						fromAcc = ((BalanceRequest)request).getAccountNumber();
 						response = new BalanceResponse(GetBalance(fromAcc));
+						System.out.println("Balance query done.");
 						break;
 					case Transfer:
+						// Transfer request
 						fromAcc = ((TransferRequest)request).transferFrom();
 						toAcc = ((TransferRequest)request).transferTo();
 						funds = ((TransferRequest)request).getAmountToTransfer();
 						response = new TransferResponse(Transfer(fromAcc, toAcc, funds));
+						System.out.println("Transfer done.");
 						break;
 				}
+				try {
+					oos = new ObjectOutputStream(cSocket.getOutputStream());
+					oos.writeObject(response);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						cSocket.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-			return response;
+			
 		} // call ends
 	} // Thread ends
 	
