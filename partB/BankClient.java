@@ -22,7 +22,6 @@ public class BankClient {
 			TProtocol protocol = new  TBinaryProtocol(transport);
 			BankService.Client client = new BankService.Client(protocol);
 			perform(client);
-			transport.close();
 			
 			List<Thread> threadList = new ArrayList<>(threadCount);
 			for(int i=0;i<threadCount;++i) {
@@ -58,6 +57,7 @@ public class BankClient {
 			for(int i=1; i<=100; ++i) {
 				totalBalance+=client.GetBalance(i);
 			}
+			transport.close();
 			System.out.println("Finished balance query on 100 accounts  : Total balance now is " + totalBalance);
 		} catch (TException | InterruptedException x) {
 			x.printStackTrace();
