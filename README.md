@@ -1,6 +1,4 @@
 # Distributed Systems - Homework assignment
-## partA : TCP based client-server model
-## partB : Apache Thrift based implementation of a client-server example implementation 
 
 /* CSci5105 Spring 2017
 * Assignment# 3
@@ -10,12 +8,12 @@
 * CSELABS machine: csel-kh4250-03.cselabs.umn.edu
 */
 
-## Part - A
+## Part - A : TCP based client-server model
 1. make inside partA directory
 2. run server : java Server 9600
 3. run clients : java BankClient localhost 9600 100 100
 
-## Part - B
+## Part - B : Apache Thrift based implementation of a client-server example implementation
 1. generate the required java files from thrift IDL
    thrift -r -out . --gen java BankService.thrift
    
