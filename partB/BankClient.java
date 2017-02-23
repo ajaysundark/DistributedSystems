@@ -23,6 +23,11 @@ public class BankClient {
 			BankService.Client client = new BankService.Client(protocol);
 			perform(client);
 			
+			serverIp = args[0];
+			serverPort = Integer.parseInt(args[1]);
+			threadCount = Integer.parseInt(args[2]);
+			iterationCount = Integer.parseInt(args[3]);
+			
 			List<Thread> threadList = new ArrayList<>(threadCount);
 			for(int i=0;i<threadCount;++i) {
 				Thread tThread = new Thread(new Runnable() {
@@ -57,6 +62,7 @@ public class BankClient {
 			for(int i=1; i<=100; ++i) {
 				totalBalance+=client.GetBalance(i);
 			}
+
 			transport.close();
 			System.out.println("Finished balance query on 100 accounts  : Total balance now is " + totalBalance);
 		} catch (TException | InterruptedException x) {
@@ -88,7 +94,8 @@ public class BankClient {
 		System.out.println("Finished balance query on 100 accounts  : Total balance now is " + totalBalance);
 	}
 	
-	private static void cLog(String log) throws IOException {
-		fw.append(log).append('\n');
+	public static void cLog(String log) {
+		try { fw.append(log + '\n');}
+		catch (IOException e) {e.printStackTrace();}
 	}
 }

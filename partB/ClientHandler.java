@@ -9,8 +9,16 @@ public class ClientHandler implements BankService.Iface {
 	int BASE=1;
 	Lock serverLock = new ReentrantLock();
 
-//	private static final String serverLog = "serverLogFile";
-//	private FileWriter fw;
+	private static final String serverLog = "serverLogFile";
+	private FileWriter fw;
+	
+	public ClientHandler() {
+		try {
+			fw = new FileWriter(serverLog);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public int CreateAccount() throws TException {
 		while(serverLock.tryLock() == false) {}
@@ -73,9 +81,15 @@ public class ClientHandler implements BankService.Iface {
 			depositAccount.lock.unlock();
 			return BankServiceConstants.SUCCESS;
 		}
+		sLog("Fund transfer from " + source + " to destn : " + destination + "failed");
 		sourceAccount.lock.unlock();
 		depositAccount.lock.unlock();
 		return BankServiceConstants.FAIL;
+	}
+
+	public void sLog(String string) {
+		try { fw.append(string + '\n'); }
+		catch(IOException e) {e.printStackTrace();}
 	}
 
 }

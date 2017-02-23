@@ -5,7 +5,8 @@ import org.apache.thrift.transport.TServerTransport;
 
 public class BankServer {
 
-	public static ClientHandler cHandler; 
+	public static ClientHandler cHandler;
+	public static int serverPort = 7100;
 
 	public static BankService.Processor processor;
 
@@ -16,7 +17,7 @@ public class BankServer {
 		try {
 			cHandler = new ClientHandler();
 			processor = new BankService.Processor(cHandler);
-			
+			serverPort = Integer.parseInt(args[0]);
 			Runnable serverParent = new Runnable() {
 				public void run() {
 					startServer(processor);
@@ -32,7 +33,7 @@ public class BankServer {
 
 	protected static void startServer(BankService.Processor sProcessor) {
 		try {
-			TServerTransport serverTransport = new TServerSocket(7100);
+			TServerTransport serverTransport = new TServerSocket(serverPort);
 			TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(sProcessor));
 			System.out.println("Starting the multi-threaded server...");
 			server.serve();
