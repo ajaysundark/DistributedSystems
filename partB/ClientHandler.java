@@ -21,6 +21,8 @@ public class ClientHandler implements BankService.Iface {
 	}
 	
 	public int CreateAccount() throws TException {
+		sLog("Received Create request from client ");
+		
 		while(serverLock.tryLock() == false) {}
 		Account account  = new Account(BASE);
 		accounts.put(BASE, account);
@@ -32,7 +34,7 @@ public class ClientHandler implements BankService.Iface {
 
 	public int Deposit(int uid, int amount) throws TException {
 		Account account = (Account) accounts.get(uid);
-
+		sLog("Received Deposit request from client for " + account.getUID());
 		while (account.lock.tryLock() == false ){}
 		if(account.deposit(amount)){
 			account.lock.unlock();
@@ -44,6 +46,7 @@ public class ClientHandler implements BankService.Iface {
 
 	public int GetBalance(int uid) throws TException {
 		Account account = (Account) accounts.get(uid);
+		sLog("Received GetBalance request from client for " + account.getUID());
 		while (account.lock.tryLock() == false ){}
 		int balance = account.getBalance();
 		account.lock.unlock();
@@ -65,6 +68,8 @@ public class ClientHandler implements BankService.Iface {
 			return BankServiceConstants.FAIL;
 			
 		}
+		
+		sLog("Received Transfer request from client for transfer from " + sourceAccount.getUID() + " to " + depositAccount.getUID());
 
 		while (sourceAccount.lock.tryLock() == false || depositAccount.lock.tryLock() == false) {
 			if (sourceAccount.lock.isLocked()) {
@@ -79,16 +84,17 @@ public class ClientHandler implements BankService.Iface {
 			depositAccount.deposit(amount);
 			sourceAccount.lock.unlock();
 			depositAccount.lock.unlock();
+			sLog("Fund transfer from " + source + " to destn : " + destination + " success");
 			return BankServiceConstants.SUCCESS;
 		}
-		sLog("Fund transfer from " + source + " to destn : " + destination + "failed");
+		sLog("Fund transfer from " + source + " to destn : " + destination + " failed");
 		sourceAccount.lock.unlock();
 		depositAccount.lock.unlock();
 		return BankServiceConstants.FAIL;
 	}
 
 	public void sLog(String string) {
-		try { fw.append(string + '\n'); }
+		try { fw.append(string + '\n');fw.flush(); }
 		catch(IOException e) {e.printStackTrace();}
 	}
 
